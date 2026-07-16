@@ -1,6 +1,5 @@
 extends Area2D
 
-@export var helper : Node2D
 @export var maze : TileMapLayer
 
 enum Direction {UP, DOWN, LEFT, RIGHT, VOID}
