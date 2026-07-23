@@ -50,19 +50,15 @@ func createPockets(count: int, safe_distance : float):
 		
 		SpawnEnemy(randX, randY)
 			
-func expandPockets(min, max, randX, randY):
+func expandPockets(_min, _max, randX, randY):
 	# 0 = horizontal, 1 = vertical
 	var randDir = randi_range(0,1)
 	var randSize = randi_range(3,5)
-	
-	print("rand Dir: " + str(randDir))
-	print("rand Size: " + str(randSize))
 
 	if randDir == 0:
 		var randXForward = randX
 		var randXReverse = randX
 		for j in randSize:
-			print(j)
 			randXForward = randXForward + 8
 			randXReverse = randXReverse-8
 			erase_cell(local_to_map(Vector2i(randXForward, randY)))
@@ -81,9 +77,22 @@ func SpawnEnemy(x, y):
 	add_child(newEnemy)
 	newEnemy.global_position = Vector2(x,y)
 	newEnemy.maze = self
-	pass
+	
+func check_valid_directions(pos):
+	var cellArrays = []
+	
+	if is_tile_free(Direction.UP, pos):
+		cellArrays.append(Direction.UP)
+	if is_tile_free(Direction.DOWN, pos):
+		cellArrays.append(Direction.DOWN)
+	if is_tile_free(Direction.LEFT, pos):
+		cellArrays.append(Direction.LEFT)
+	if is_tile_free(Direction.RIGHT, pos):
+		cellArrays.append(Direction.RIGHT)
+	
+	return cellArrays
 
-func is_tile_free(dir, pos) -> bool:
+func is_tile_free(dir, pos, player : bool = false) -> bool:
 	# Get current cell
 	var current_cell = local_to_map(pos)
 	
@@ -96,13 +105,22 @@ func is_tile_free(dir, pos) -> bool:
 		Direction.RIGHT: next_cell.x += 1
 		
 	# Check if it's free - if so, return true
-	
 	var tile_data = get_cell_tile_data(next_cell)
-	
-	if tile_data == null:
-		return true
+	var source_id = get_cell_source_id(next_cell)
+
+	if player:
+		if source_id == 2:
+			return false
+		else:
+			return true
 	else:
-		return false
+		if source_id == 2:
+			return false
+		else:
+			if tile_data == null:
+				return true
+			else:
+				return false
 		
 func get_tile(dir, pos):
 	# Get current cell

@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://txntotitgfci"]
+
+[ext_resource type="Script" uid="uid://cqp4aqcgwj0rl" path="res://Scripts/rock.gd" id="1_5mkji"]
+[ext_resource type="Texture2D" uid="uid://bgi818xp8eb35" path="res://Assets/Sam.png" id="1_lgx4v"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6phgx"]
+atlas = ExtResource("1_lgx4v")
+region = Rect2(192, 0, 16, 28)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_5mkji"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6phgx")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vd8au"]
+size = Vector2(12, 12)
+
+[node name="Rock" type="Area2D" unique_id=1709407638]
+script = ExtResource("1_5mkji")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1059449681]
+modulate = Color(0, 1, 1, 1)
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_5mkji")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1331280162]
+shape = SubResource("RectangleShape2D_vd8au")

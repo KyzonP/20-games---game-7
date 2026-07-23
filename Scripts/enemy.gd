@@ -4,109 +4,141 @@ extends Area2D
 
 var state : States = States.MOVE
 var lastDir : Direction = Direction.VOID
-var moveDir : Direction = Direction.VOID
-
-enum States {MOVE, BURROW}
-enum Direction {UP, DOWN, LEFT, RIGHT, VOID}
-
+var moveDir : Direction = Direction.RIGHT
+var player : Area2D
 var speed : float = 40.0
 
+var burrowTimer : float = 0.0
+var burrowTimerMax : float = 100.0
+var burrowTarget : Vector2 = Vector2.ZERO
+var burrowComplete : bool = false
+var burrowTween
+
+var fleeTween
+
+enum States {MOVE, BURROW, FLEE}
+enum Direction {UP, DOWN, LEFT, RIGHT, VOID}
+
 const SNAP_DISTANCE = 4
+
+func _ready():
+	player = get_tree().get_nodes_in_group("Player")[0]
+	
+	burrowTimerMax = randf_range(5,10)
 
 func _physics_process(delta):
 	var cell = maze.local_to_map(global_position)
 	var centre = maze.map_to_local(cell)
 	
-	if lastDir != moveDir and maze.is_tile_free(lastDir, global_position):
-		if global_position.distance_to(centre) < SNAP_DISTANCE:
-			global_position = centre
-			moveDir = lastDir
+	if state == States.MOVE:
+		if not burrowComplete:
+			burrowTimer += delta
+			if burrowTimer >= burrowTimerMax:
+				startBurrow()
+
+		# If at the centre of a tile, check the tile ahead. If it's not available, get an array of
+		# all possible directions. If there's only one, go that way, otherwise go the way that is
+		# closest to the player
+		if global_position.distance_to(centre) < (speed/1.5 * delta):
+			chooseDirection()
 			
-	if global_position.distance_to(centre) < (speed/1.5 * delta):
-		checkIntersection(cell,centre)
-		
-	match moveDir:
-		Direction.UP: global_position.y -= speed * delta
-		Direction.DOWN: global_position.y += speed * delta
-		Direction.LEFT: global_position.x -= speed * delta
-		Direction.RIGHT: global_position.x += speed * delta
-		
-func checkIntersection(_cell, centre, turn : bool = false, spawn : bool = false):
-	var possDir : Array[PotentialTiles] = []
-	var _possibleDirections = 0
-	
-	var singleDir : Direction
-	var singleDirConfirmed : bool = false
-	
-	
-	
-	if maze.is_tile_free(Direction.DOWN, centre + nextTile()):
-		var newPoss = PotentialTiles.new(Direction.DOWN, maze.get_tile(Direction.DOWN, centre + nextTile()))
-		possDir.append(newPoss)
-		
-		_possibleDirections += 1
-		
-		if not singleDirConfirmed:
-			if moveDir == Direction.DOWN:
-				singleDir = moveDir
-				singleDirConfirmed = true
+		match moveDir:
+			Direction.UP: global_position.y -= speed * delta
+			Direction.DOWN: global_position.y += speed * delta
+			Direction.LEFT: global_position.x -= speed * delta
+			Direction.RIGHT: global_position.x += speed * delta
 			
-	if maze.is_tile_free(Direction.UP, centre + nextTile()):
-		var newPoss = PotentialTiles.new(Direction.UP, maze.get_tile(Direction.UP, centre + nextTile()))
-		possDir.append(newPoss)
+	elif state == States.BURROW:
+		pass
 		
-		_possibleDirections += 1
+	elif state == States.FLEE:
+		pass
 		
-		if not singleDirConfirmed:
-			if moveDir == Direction.UP:
-				singleDir = moveDir
-				singleDirConfirmed = true
+func startBurrow():
+	if burrowTween:
+		burrowTween.kill()
 	
-	if maze.is_tile_free(Direction.LEFT, centre + nextTile()):
-		var newPoss = PotentialTiles.new(Direction.LEFT, maze.get_tile(Direction.LEFT, centre + nextTile()))
-		possDir.append(newPoss)
+	burrowTween = create_tween()
+	burrowTarget = player.global_position
+	burrowTween.tween_property(self, "position", burrowTarget, self.position.distance_to(player.global_position)/speed)
+	burrowTween.finished.connect(endBurrow)
+	
+	state = States.BURROW
+	
+func endBurrow():
+	burrowComplete = true
+	state = States.MOVE
+	chooseDirection(true)
+	
+	var cell = maze.local_to_map(global_position)
+	var centre = maze.map_to_local(cell)
+	global_position = centre
+	
+	if burrowTween:
+		burrowTween.kill()
 		
-		_possibleDirections += 1
+	startFlee()
 		
-		if not singleDirConfirmed:
-			if moveDir == Direction.LEFT:
-				singleDir = moveDir
-				singleDirConfirmed = true
+func startFlee():
+	state = States.FLEE
+	
+	if fleeTween:
+		fleeTween.kill()
+	#56
+	fleeTween = create_tween()
+	fleeTween.tween_property(self, "position", Vector2(self.global_position.x, 56), self.global_position.distance_to(Vector2(self.global_position.x, 56))/speed)
+	fleeTween.finished.connect(continueFlee)
+
+func continueFlee():
+	if fleeTween:
+		fleeTween.kill()
+	fleeTween = create_tween()
+	fleeTween.tween_property(self, "position", Vector2(-8, self.global_position.y), self.global_position.distance_to(Vector2(-8, self.global_position.y))/speed)
+	fleeTween.finished.connect(finishFlee)
+
+func finishFlee():
+	# Code for ending level
+	pass
+	
+func defeat():
+	# code for enemy dying
+	if burrowTween:
+		burrowTween.kill()
+	if fleeTween:
+		fleeTween.kill()
+		
+	self.queue_free()
+
+func chooseDirection(noDir : bool = false):
+	var possibleDirections = maze.check_valid_directions(global_position)
 			
-	if maze.is_tile_free(Direction.RIGHT, centre + nextTile()):
-		var newPoss = PotentialTiles.new(Direction.RIGHT, maze.get_tile(Direction.RIGHT, centre + nextTile()))
-		possDir.append(newPoss)
-		
-		_possibleDirections += 1
-		
-		if not singleDirConfirmed:
-			if moveDir == Direction.RIGHT:
-				singleDir = moveDir
-				singleDirConfirmed = true
-		
-	if possDir.size() == 1:
-		lastDir = possDir[0].dir
-	elif singleDirConfirmed:
-		lastDir = singleDir
+	if possibleDirections.size() == 1:
+		moveDir = possibleDirections[0]
 	else:
-		var randDir = randi_range(0,3)
-		if randDir == 0:
-			if maze.is_tile_free(Direction.UP, centre + nextTile()):
-				lastDir = Direction.UP
-				return
-		elif randDir:
-			if maze.is_tile_free(Direction.LEFT, centre + nextTile()):
-				lastDir = Direction.LEFT
-				return
-		elif randDir:
-			if maze.is_tile_free(Direction.RIGHT, centre + nextTile()):
-				lastDir = Direction.RIGHT
-				return
-		elif randDir:
-			if maze.is_tile_free(Direction.DOWN, centre + nextTile()):
-				lastDir = Direction.DOWN
-				return
-	
+		var shortestDistance = 10000000
+		var reverseDir
+		if moveDir == Direction.UP:
+			reverseDir = Direction.DOWN
+		elif moveDir == Direction.LEFT:
+			reverseDir = Direction.RIGHT
+		elif moveDir == Direction.DOWN:
+			reverseDir = Direction.UP
+		elif moveDir == Direction.RIGHT:
+			reverseDir = Direction.LEFT
+			
+		if noDir:
+			reverseDir = Direction.VOID
+		
+		for i in possibleDirections.size():
+			if possibleDirections[i] != reverseDir:
+				var distance = player.global_position.distance_to(maze.get_tile(possibleDirections[i], global_position))
+				if distance < shortestDistance:
+					shortestDistance = distance
+					moveDir = possibleDirections[i]
+					
+	if global_position.y <= 44:
+		moveDir = Direction.DOWN
+
 func nextTile():
 	if moveDir == Direction.UP:
 		return Vector2(0,-16)

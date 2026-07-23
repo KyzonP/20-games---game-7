@@ -14,6 +14,10 @@ var speed : float = 80.0
 
 const SNAP_DISTANCE = 4
 
+func _ready():
+	var cell = maze.local_to_map(global_position)
+	var centre = maze.map_to_local(cell)
+	maze.TileReached(centre)
 
 func _input(event):
 	if event.is_action_pressed("move_up"):
@@ -53,7 +57,8 @@ func _physics_process(delta):
 		maze.TileReached(centre)
 		
 		# If leaving map boundaries
-		if 1 != 1:
+		if not maze.is_tile_free(moveDir, global_position, true):
+			
 			global_position = centre
 			moveDir = Direction.VOID
 			
@@ -62,6 +67,7 @@ func _physics_process(delta):
 		Direction.DOWN: global_position.y += speed * delta
 		Direction.LEFT: global_position.x -= speed * delta
 		Direction.RIGHT: global_position.x += speed * delta
-			
-	
-	pass
+		
+	if global_position.y <= 56:
+		global_position = centre
+		moveDir = Direction.VOID
