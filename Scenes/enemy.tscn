@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://cejaclwqbetoi"]
 
-[ext_resource type="Script" uid="uid://v8c28dn0mdyp" path="res://Scripts/enemy.gd" id="1_1f0kj"]
-[ext_resource type="Texture2D" uid="uid://bgi818xp8eb35" path="res://Assets/Sam.png" id="1_hghv2"]
+[ext_resource type="Script" uid="uid://v8c28dn0mdyp" path="res://scripts/enemy.gd" id="1_md0e3"]
+[ext_resource type="Texture2D" uid="uid://bgi818xp8eb35" path="res://assets/placeholder/Sam.png" id="2_4ra3w"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6phgx"]
-atlas = ExtResource("1_hghv2")
+atlas = ExtResource("2_4ra3w")
 region = Rect2(192, 0, 16, 28)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_1f0kj"]
@@ -21,8 +21,10 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_afpow"]
 size = Vector2(12, 12)
 
-[node name="Enemy" type="Area2D" unique_id=392511293]
-script = ExtResource("1_1f0kj")
+[node name="Enemy" type="Area2D" unique_id=392511293 groups=["Enemy"]]
+collision_layer = 2
+collision_mask = 13
+script = ExtResource("1_md0e3")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1671676825]
 modulate = Color(1, 1, 0, 1)

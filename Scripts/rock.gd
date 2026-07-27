@@ -5,12 +5,12 @@ var state = States.STABLE
 var shakeTween
 var fallTween
 
-var speed : float = 40.0
+var speed : float = 120.0
 
 enum States {STABLE, SHAKING, FALLING}
 enum Direction {UP, DOWN, LEFT, RIGHT, VOID}
 
-func _physics_process(delta):
+func _physics_process(_delta):
 	if state == States.STABLE:
 		if checkBeneath():
 			startShake()
@@ -30,7 +30,7 @@ func startShake():
 	var shake_count = 10
 	for i in shake_count:
 		shakeTween.tween_property($AnimatedSprite2D, "position", Vector2(randf_range(-shake, shake), randf_range(-shake, shake)), shake_duration / shake_count)
-		shakeTween.finished.connect(startFall)
+	shakeTween.finished.connect(startFall)
 
 func startFall():
 	state = States.FALLING

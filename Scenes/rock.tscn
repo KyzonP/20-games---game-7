@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://txntotitgfci"]
 
-[ext_resource type="Script" uid="uid://cqp4aqcgwj0rl" path="res://Scripts/rock.gd" id="1_5mkji"]
-[ext_resource type="Texture2D" uid="uid://bgi818xp8eb35" path="res://Assets/Sam.png" id="1_lgx4v"]
+[ext_resource type="Script" uid="uid://cqp4aqcgwj0rl" path="res://scripts/rock.gd" id="1_mek2u"]
+[ext_resource type="Texture2D" uid="uid://bgi818xp8eb35" path="res://assets/placeholder/Sam.png" id="2_ik6fu"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6phgx"]
-atlas = ExtResource("1_lgx4v")
+atlas = ExtResource("2_ik6fu")
 region = Rect2(192, 0, 16, 28)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_5mkji"]
@@ -21,8 +21,10 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vd8au"]
 size = Vector2(12, 12)
 
-[node name="Rock" type="Area2D" unique_id=1709407638]
-script = ExtResource("1_5mkji")
+[node name="Rock" type="Area2D" unique_id=1709407638 groups=["Rock"]]
+collision_layer = 4
+collision_mask = 11
+script = ExtResource("1_mek2u")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1059449681]
 modulate = Color(0, 1, 1, 1)

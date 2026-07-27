@@ -2,7 +2,7 @@ extends Area2D
 
 @export var maze : TileMapLayer
 
-var state : States = States.MOVE
+var state : States = States.WAIT
 var lastDir : Direction = Direction.VOID
 var moveDir : Direction = Direction.RIGHT
 var player : Area2D
@@ -14,9 +14,12 @@ var burrowTarget : Vector2 = Vector2.ZERO
 var burrowComplete : bool = false
 var burrowTween
 
+var burrowMin : float = 7.0
+var burrowMax : float = 20.0
+
 var fleeTween
 
-enum States {MOVE, BURROW, FLEE}
+enum States {MOVE, BURROW, FLEE, WAIT}
 enum Direction {UP, DOWN, LEFT, RIGHT, VOID}
 
 const SNAP_DISTANCE = 4
@@ -24,7 +27,25 @@ const SNAP_DISTANCE = 4
 func _ready():
 	player = get_tree().get_nodes_in_group("Player")[0]
 	
-	burrowTimerMax = randf_range(5,10)
+	area_entered.connect(killCollide)
+	event_bus.flee.connect(startFlee)
+	event_bus.startLevel.connect(unlock)
+	
+	setStats()
+	
+	burrowTimerMax = randf_range(burrowMin,burrowMax)
+	
+func setStats():
+	speed = speed  + ((4 * global.level)-4)
+	
+	burrowMin = burrowMin - global.level
+	burrowMax = burrowMax - global.level
+
+	if burrowMin <= 0:
+		burrowMin = 1
+	
+	if burrowMax <= 5:
+		burrowMax = 5
 
 func _physics_process(delta):
 	var cell = maze.local_to_map(global_position)
@@ -53,6 +74,12 @@ func _physics_process(delta):
 		
 	elif state == States.FLEE:
 		pass
+	
+	elif state == States.WAIT:
+		pass
+		
+func unlock():
+	state = States.MOVE
 		
 func startBurrow():
 	if burrowTween:
@@ -77,7 +104,7 @@ func endBurrow():
 	if burrowTween:
 		burrowTween.kill()
 		
-	startFlee()
+	#startFlee()
 		
 func startFlee():
 	state = States.FLEE
@@ -98,7 +125,7 @@ func continueFlee():
 
 func finishFlee():
 	# Code for ending level
-	pass
+	event_bus.emit_signal("enemyFled")
 	
 func defeat():
 	# code for enemy dying
@@ -107,6 +134,7 @@ func defeat():
 	if fleeTween:
 		fleeTween.kill()
 		
+	event_bus.emit_signal("enemyDefeated", global_position.y)
 	self.queue_free()
 
 func chooseDirection(noDir : bool = false):
@@ -150,6 +178,13 @@ func nextTile():
 		return Vector2(-16,0)
 	
 	return Vector2.ZERO
+	
+func killCollide(area):
+	if area.is_in_group("Projectile"):
+		defeat()
+	if area.is_in_group("Rock"):
+		if area.state == area.States.FALLING:
+			defeat()
 	
 class PotentialTiles:
 	var dir : Direction
