@@ -43,7 +43,6 @@ func startLevel():
 	event_bus.emit_signal("startLevel")
 	
 func checkEnemies(yPos):
-	print(yPos)
 	if yPos > 392:
 		adjustScore(40)
 	elif yPos > 280:
@@ -81,5 +80,5 @@ func endLevel():
 		global.level = global.level + 1
 		restartLevel()
 		
-func gameOver():
+func gameOver():	
 	pass

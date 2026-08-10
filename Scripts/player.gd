@@ -97,6 +97,26 @@ func _physics_process(delta):
 		if global_position.distance_to(centre) < (speed * delta):
 			maze.TileReached(centre)
 			
+	updateAnim()
+			
+func updateAnim():
+	match moveDir:
+		Direction.VOID:
+			if $AnimatedSprite2D.is_playing():
+				$AnimatedSprite2D.stop()
+		Direction.UP:
+			if $AnimatedSprite2D.animation != "up":
+				$AnimatedSprite2D.play("up")
+		Direction.DOWN:
+			if $AnimatedSprite2D.animation != "down":
+				$AnimatedSprite2D.play("down")
+		Direction.LEFT:
+			if $AnimatedSprite2D.animation != "left":
+				$AnimatedSprite2D.play("left")
+		Direction.RIGHT:
+			if $AnimatedSprite2D.animation != "right":
+				$AnimatedSprite2D.play("right")
+			
 func SpawnProjectile():
 	if shootTimer >= shootTimerMax:
 		shootTimer = 0
