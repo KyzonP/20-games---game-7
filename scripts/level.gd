@@ -26,6 +26,10 @@ func _ready():
 func horizontalMove():
 	if horizontalTween:
 		horizontalTween.kill()
+		
+	# Player animation
+	player.moveDir = player.Direction.LEFT
+	player.updateAnim()
 	
 	horizontalTween = create_tween()
 	horizontalTween.tween_property(player, "position", Vector2(232, player.global_position.y), player.global_position.distance_to(Vector2(232, self.global_position.y))/player.speed)
@@ -34,12 +38,20 @@ func horizontalMove():
 func verticalMove():
 	if verticalTween:
 		verticalTween.kill()
+		
+	# Player animation
+	player.moveDir = player.Direction.DOWN
+	player.updateAnim()
 	
 	verticalTween = create_tween()
 	verticalTween.tween_property(player, "position", Vector2(player.global_position.x, 280), player.global_position.distance_to(Vector2(player.global_position.x, 280))/player.speed)
 	verticalTween.finished.connect(startLevel)
 	
 func startLevel():
+	# Player animation
+	player.moveDir = player.Direction.VOID
+	player.updateAnim()
+	
 	event_bus.emit_signal("startLevel")
 	
 func checkEnemies(yPos):

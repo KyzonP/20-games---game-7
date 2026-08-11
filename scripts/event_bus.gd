@@ -17,3 +17,9 @@ signal playerDefeated()
 
 @warning_ignore("unused_signal")
 signal updateUI()
+
+@warning_ignore("unused_signal")
+signal shotFired()
+
+@warning_ignore("unused_signal")
+signal shotReady()

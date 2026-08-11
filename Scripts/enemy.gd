@@ -78,8 +78,36 @@ func _physics_process(delta):
 	elif state == States.WAIT:
 		pass
 		
+	updateAnim()
+		
 func unlock():
 	state = States.MOVE
+	
+func updateAnim():
+	match state:
+		States.MOVE:
+			match moveDir:
+				Direction.VOID:
+					if $AnimatedSprite2D.is_playing():
+						$AnimatedSprite2D.stop()
+				Direction.UP:
+					if $AnimatedSprite2D.animation != "up":
+						$AnimatedSprite2D.play("up")
+				Direction.DOWN:
+					if $AnimatedSprite2D.animation != "down":
+						$AnimatedSprite2D.play("down")
+				Direction.LEFT:
+					if $AnimatedSprite2D.animation != "left":
+						$AnimatedSprite2D.play("left")
+				Direction.RIGHT:
+					if $AnimatedSprite2D.animation != "right":
+						$AnimatedSprite2D.play("right")
+		States.BURROW:
+			if $AnimatedSprite2D.animation != "eyes":
+				$AnimatedSprite2D.play("eyes")
+		States.FLEE:
+			if $AnimatedSprite2D.animation != "eyes":
+				$AnimatedSprite2D.play("eyes")
 		
 func startBurrow():
 	if burrowTween:

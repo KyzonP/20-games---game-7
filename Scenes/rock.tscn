@@ -1,17 +1,13 @@
 [gd_scene format=3 uid="uid://txntotitgfci"]
 
 [ext_resource type="Script" uid="uid://cqp4aqcgwj0rl" path="res://scripts/rock.gd" id="1_mek2u"]
-[ext_resource type="Texture2D" uid="uid://bgi818xp8eb35" path="res://assets/placeholder/Sam.png" id="2_ik6fu"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_6phgx"]
-atlas = ExtResource("2_ik6fu")
-region = Rect2(192, 0, 16, 28)
+[ext_resource type="Texture2D" uid="uid://b80rjhn8kb4qv" path="res://assets/sprites/Boulder.png" id="2_mek2u"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_5mkji"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_6phgx")
+"texture": ExtResource("2_mek2u")
 }],
 "loop": true,
 "name": &"default",
@@ -27,7 +23,6 @@ collision_mask = 11
 script = ExtResource("1_mek2u")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1059449681]
-modulate = Color(0, 1, 1, 1)
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_5mkji")
 

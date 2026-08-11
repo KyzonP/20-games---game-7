@@ -15,6 +15,7 @@ var lock : bool = true
 var dead : bool = false
 var shootTimer : float = 2.0
 var shootTimerMax : float = 2.0
+var shotReady : bool = true
 
 var projectile = load("res://scenes/projectile.tscn")
 
@@ -65,7 +66,12 @@ func _physics_process(delta):
 	var cell = maze.local_to_map(global_position)
 	var centre = maze.map_to_local(cell)
 	if not lock:
+		updateAnim()
+		
 		shootTimer += delta
+		if shootTimer >= shootTimerMax and not shotReady:
+			shotReady = true
+			event_bus.shotReady.emit()
 		
 		if not moveUp and not moveLeft and not moveDown and not moveRight:
 			lastDir = Direction.VOID
@@ -97,7 +103,7 @@ func _physics_process(delta):
 		if global_position.distance_to(centre) < (speed * delta):
 			maze.TileReached(centre)
 			
-	updateAnim()
+	
 			
 func updateAnim():
 	match moveDir:
@@ -118,14 +124,17 @@ func updateAnim():
 				$AnimatedSprite2D.play("right")
 			
 func SpawnProjectile():
-	if shootTimer >= shootTimerMax:
+	if shootTimer >= shootTimerMax and shotReady:
 		shootTimer = 0
+		shotReady = false
 		
 		var newProjectile = projectile.instantiate()
 		get_parent().add_child(newProjectile)
 		newProjectile.global_position = self.global_position
 		newProjectile.maze = maze
 		newProjectile.moveDir = faceDir
+		
+		event_bus.shotFired.emit()
 			
 func unlock():
 	lock = false
