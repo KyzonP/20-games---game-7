@@ -1,5 +1,7 @@
 extends Area2D
 
+@export var fake : bool = false
+
 @export var maze : TileMapLayer
 
 var state : States = States.WAIT
@@ -25,7 +27,10 @@ enum Direction {UP, DOWN, LEFT, RIGHT, VOID}
 const SNAP_DISTANCE = 4
 
 func _ready():
-	player = get_tree().get_nodes_in_group("Player")[0]
+	if not fake:
+		player = get_tree().get_nodes_in_group("Player")[0]
+	else:
+		unlock()
 	
 	area_entered.connect(killCollide)
 	event_bus.flee.connect(startFlee)
@@ -52,7 +57,7 @@ func _physics_process(delta):
 	var centre = maze.map_to_local(cell)
 	
 	if state == States.MOVE:
-		if not burrowComplete:
+		if not burrowComplete and not fake:
 			burrowTimer += delta
 			if burrowTimer >= burrowTimerMax:
 				startBurrow()
@@ -185,12 +190,19 @@ func chooseDirection(noDir : bool = false):
 		if noDir:
 			reverseDir = Direction.VOID
 		
-		for i in possibleDirections.size():
-			if possibleDirections[i] != reverseDir:
-				var distance = player.global_position.distance_to(maze.get_tile(possibleDirections[i], global_position))
-				if distance < shortestDistance:
-					shortestDistance = distance
-					moveDir = possibleDirections[i]
+		if not fake:
+			for i in possibleDirections.size():
+				if possibleDirections[i] != reverseDir:
+					var distance = player.global_position.distance_to(maze.get_tile(possibleDirections[i], global_position))
+					if distance < shortestDistance:
+						shortestDistance = distance
+						moveDir = possibleDirections[i]
+		else:
+			for i in possibleDirections.size():
+				if possibleDirections[i] == reverseDir:
+					possibleDirections.remove_at(i)
+					break
+			moveDir = possibleDirections.pick_random()
 					
 	if global_position.y <= 44:
 		moveDir = Direction.DOWN

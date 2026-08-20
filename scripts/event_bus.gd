@@ -23,3 +23,12 @@ signal shotFired()
 
 @warning_ignore("unused_signal")
 signal shotReady()
+
+@warning_ignore("unused_signal")
+signal joystickMoved(direction)
+
+@warning_ignore("unused_signal")
+signal joystickReleased()
+
+@warning_ignore("unused_signal")
+signal mobileShoot()

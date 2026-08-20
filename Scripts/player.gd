@@ -29,6 +29,9 @@ func _ready():
 	
 	area_entered.connect(killCollide)
 	event_bus.startLevel.connect(unlock)
+	event_bus.mobileShoot.connect(SpawnProjectile)
+	event_bus.joystickMoved.connect(joystickMovement)
+	event_bus.joystickReleased.connect(joystickReleased)
 	
 	maze.TileReached(centre)
 
@@ -61,7 +64,37 @@ func _input(event):
 	if not lock:
 		if event.is_action_pressed("shoot"):
 			SpawnProjectile()
-	
+			
+func joystickMovement(direction):
+	# so 20 in each direction - x as -20 for left, +20 for right
+	# y as -20 for up, +20 for down
+	if abs(direction[0]) > abs(direction[1]):
+		# horizontal
+		if direction[0] < 0:
+			lastDir = Direction.LEFT
+			faceDir = Direction.LEFT
+			moveLeft = true
+		else:
+			lastDir = Direction.RIGHT
+			faceDir = Direction.RIGHT
+			moveRight = true
+	else:
+		# vertical
+		if direction[1] < 0:
+			lastDir = Direction.UP
+			faceDir = Direction.UP
+			moveUp = true
+		else:
+			lastDir = Direction.DOWN
+			faceDir = Direction.DOWN
+			moveDown = true
+			
+func joystickReleased():
+	moveLeft = false
+	moveRight = false
+	moveUp = false
+	moveDown = false
+		
 func _physics_process(delta):
 	var cell = maze.local_to_map(global_position)
 	var centre = maze.map_to_local(cell)
@@ -124,7 +157,7 @@ func updateAnim():
 				$AnimatedSprite2D.play("right")
 			
 func SpawnProjectile():
-	if shootTimer >= shootTimerMax and shotReady:
+	if shootTimer >= shootTimerMax and shotReady and not lock:
 		shootTimer = 0
 		shotReady = false
 		

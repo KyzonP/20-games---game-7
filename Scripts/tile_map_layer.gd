@@ -1,5 +1,7 @@
 extends TileMapLayer
 
+@export var fake : bool = false
+
 @export var x_min : int = 10
 @export var x_max : int = 47
 @export var y_min : int = 15
@@ -17,7 +19,8 @@ func TileReached(tile):
 	erase_cell(local_to_map(tile))
 	
 func _ready():
-	startLevel()
+	if not fake:
+		startLevel()
 	
 func startLevel():
 	createPockets(4,5)

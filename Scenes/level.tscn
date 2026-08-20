@@ -11,6 +11,12 @@
 [ext_resource type="Script" uid="uid://b27tqbnay76xw" path="res://scripts/ui.gd" id="6_klq6b"]
 [ext_resource type="Script" uid="uid://bm2jnb1ot0v8c" path="res://scripts/other_ui.gd" id="10_olg7q"]
 [ext_resource type="Texture2D" uid="uid://dy7kqoj05mid7" path="res://assets/sprites/BigProjectile.png" id="11_t1rx8"]
+[ext_resource type="Texture2D" uid="uid://bvey5n16adwip" path="res://assets/ui/TouchJoystickBack.png" id="12_8iemx"]
+[ext_resource type="Texture2D" uid="uid://wmxlwbwil228" path="res://assets/ui/UIBase.png" id="12_ux5qa"]
+[ext_resource type="Texture2D" uid="uid://2ctxnwkq1ac0" path="res://assets/ui/TouchJoystickFront.png" id="13_64w2a"]
+[ext_resource type="Script" uid="uid://hwpbay1oi4am" path="res://scripts/touch_screen_button.gd" id="14_fpun6"]
+[ext_resource type="Script" uid="uid://cqxu4bbvd5e88" path="res://scripts/shoot_button.gd" id="15_wc255"]
+[ext_resource type="Shader" uid="uid://cgvfmjqc832x3" path="res://assets/shaders/vignette.gdshader" id="16_arp2o"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_81xng"]
 texture = ExtResource("2_2r41h")
@@ -302,6 +308,12 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_k5f4k"]
 size = Vector2(12, 12)
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ux5qa"]
+shader = ExtResource("16_arp2o")
+shader_parameter/alpha = 0.375
+shader_parameter/inner_radius = 0.665
+shader_parameter/outer_radius = 0.85
+
 [node name="Level" type="Node2D" unique_id=193511366]
 script = ExtResource("1_ppgk2")
 
@@ -333,24 +345,37 @@ autoplay = "down"
 shape = SubResource("RectangleShape2D_k5f4k")
 
 [node name="UI" type="Control" parent="." unique_id=164248201]
+z_index = 5
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("6_klq6b")
 
-[node name="HBoxContainer" type="VBoxContainer" parent="UI" unique_id=910489293]
+[node name="HBoxContainer" type="HBoxContainer" parent="UI" unique_id=666692575]
 layout_mode = 0
 offset_left = 3.0
-offset_top = 529.0
-offset_right = 411.0
-offset_bottom = 583.0
+offset_top = 8.0
+offset_right = 447.0
+offset_bottom = 62.0
+alignment = 1
 
-[node name="ScoreText" type="RichTextLabel" parent="UI/HBoxContainer" unique_id=692473822]
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/HBoxContainer" unique_id=1122399595]
+layout_mode = 2
+alignment = 1
+
+[node name="ScoreText" type="RichTextLabel" parent="UI/HBoxContainer/VBoxContainer" unique_id=692473822]
 custom_minimum_size = Vector2(135, 25)
 layout_mode = 2
 theme_override_fonts/normal_font = ExtResource("6_2r41h")
 text = "Score: 0"
+fit_content = true
+
+[node name="LevelText" type="RichTextLabel" parent="UI/HBoxContainer/VBoxContainer" unique_id=1003378386]
+custom_minimum_size = Vector2(135, 25)
+layout_mode = 2
+theme_override_fonts/normal_font = ExtResource("6_2r41h")
+text = "Level: 0"
 fit_content = true
 
 [node name="LivesText" type="RichTextLabel" parent="UI/HBoxContainer" unique_id=1383932645]
@@ -360,17 +385,6 @@ theme_override_fonts/normal_font = ExtResource("6_2r41h")
 text = "Lives: 3"
 fit_content = true
 
-[node name="LevelText" type="RichTextLabel" parent="UI" unique_id=1003378386]
-custom_minimum_size = Vector2(135, 25)
-layout_mode = 0
-offset_left = 3.0
-offset_top = 3.0
-offset_right = 138.0
-offset_bottom = 28.0
-theme_override_fonts/normal_font = ExtResource("6_2r41h")
-text = "Level: 0"
-fit_content = true
-
 [node name="OtherUI" type="CanvasLayer" parent="." unique_id=886330036]
 script = ExtResource("10_olg7q")
 
@@ -378,3 +392,63 @@ script = ExtResource("10_olg7q")
 texture_filter = 1
 position = Vector2(424, 552)
 texture = ExtResource("11_t1rx8")
+
+[node name="ShootText" type="RichTextLabel" parent="OtherUI" unique_id=2027745490]
+custom_minimum_size = Vector2(130, 25)
+offset_left = 297.0
+offset_top = 536.0
+offset_right = 427.0
+offset_bottom = 569.0
+theme_override_fonts/normal_font = ExtResource("6_2r41h")
+bbcode_enabled = true
+text = "[center]Shoot
+[Space]"
+fit_content = true
+
+[node name="MoveText" type="RichTextLabel" parent="OtherUI" unique_id=1125669971]
+custom_minimum_size = Vector2(130, 25)
+offset_left = 8.0
+offset_top = 536.0
+offset_right = 140.0
+offset_bottom = 577.0
+theme_override_fonts/normal_font = ExtResource("6_2r41h")
+bbcode_enabled = true
+text = "[center]Move
+[WASD]"
+fit_content = true
+
+[node name="TouchJoystick" type="Node2D" parent="." unique_id=1994840549]
+z_index = 6
+position = Vector2(140, 516)
+scale = Vector2(0.5, 0.5)
+
+[node name="JoystickBase" type="Sprite2D" parent="TouchJoystick" unique_id=1093848471]
+position = Vector2(60, 60)
+texture = ExtResource("12_8iemx")
+
+[node name="TouchScreenButton" type="TouchScreenButton" parent="TouchJoystick" unique_id=1721850629]
+texture_normal = ExtResource("13_64w2a")
+script = ExtResource("14_fpun6")
+
+[node name="ShootButton" type="TouchScreenButton" parent="." unique_id=283621684]
+z_index = 6
+position = Vector2(248, 516)
+scale = Vector2(0.5, 0.5)
+texture_normal = ExtResource("12_8iemx")
+script = ExtResource("15_wc255")
+
+[node name="Sprite2D" type="Sprite2D" parent="ShootButton" unique_id=503166830]
+position = Vector2(60, 60)
+texture = ExtResource("13_64w2a")
+
+[node name="UI2" type="Sprite2D" parent="." unique_id=1274567514]
+z_index = 1
+texture_filter = 1
+position = Vector2(224, 552)
+texture = ExtResource("12_ux5qa")
+
+[node name="Vignette" type="ColorRect" parent="." unique_id=399632946]
+material = SubResource("ShaderMaterial_ux5qa")
+offset_right = 448.0
+offset_bottom = 576.0
+color = Color(0, 0, 0, 1)

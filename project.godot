@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="20 Games - Game 7"
-run/main_scene="uid://skun2xhrc34w"
+run/main_scene="uid://bxem02amaknc5"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 boot_splash/bg_color=Color(0, 0, 0, 1)
 boot_splash/image="uid://bljwp4iphsk7j"
@@ -21,11 +21,14 @@ config/icon="res://icon.svg"
 
 event_bus="*uid://div87416rpntf"
 global="*uid://beomspnovlsnu"
+save_load="*uid://dp42sdex78adx"
 
 [display]
 
 window/size/viewport_width=448
 window/size/viewport_height=576
+window/size/resizable=false
+window/stretch/mode="viewport"
 
 [input]
 
@@ -58,6 +61,10 @@ shoot={
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":32,"key_label":0,"unicode":32,"location":0,"echo":false,"script":null)
 ]
 }
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
 
 [physics]
 

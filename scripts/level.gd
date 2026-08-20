@@ -13,6 +13,9 @@ var verticalTween
 
 var levelEnded : bool = false
 
+var checkTimer : float = 0.0
+var checkTimerMax : float = 5.0
+
 func _ready():
 	event_bus.enemyDefeated.connect(checkEnemies)
 	event_bus.enemyFled.connect(endLevel)
@@ -22,6 +25,25 @@ func _ready():
 	
 	horizontalMove()
 	event_bus.emit_signal("updateUI")
+	
+	if not checkMobile():
+		$TouchJoystick.queue_free()
+		$ShootButton.queue_free()
+	else:
+		$OtherUI/MoveText.text = "[center]Move"
+		$OtherUI/ShootText.text = "[center]Shoot"
+		
+func _physics_process(delta):
+	checkTimer += delta
+	if checkTimer >= checkTimerMax:
+		checkEnemies(-100)
+		checkTimer = 0
+	
+func checkMobile():
+	if OS.has_feature("web_android") or OS.has_feature("web_ios"):
+		return true
+	else:
+		return false
 	
 func horizontalMove():
 	if horizontalTween:
@@ -61,10 +83,10 @@ func checkEnemies(yPos):
 		adjustScore(30)
 	elif yPos > 168:
 		adjustScore(20)
-	else:
+	elif yPos > 0:
 		adjustScore(10)
 	
-	var enemyCount = get_tree().get_nodes_in_group("Enemy").size()-1
+	var enemyCount = get_tree().get_nodes_in_group("Enemy").size()
 	if enemyCount == 1:
 		event_bus.emit_signal("flee")
 	elif enemyCount <= 0:
@@ -93,4 +115,4 @@ func endLevel():
 		restartLevel()
 		
 func gameOver():	
-	pass
+	get_tree().change_scene_to_file("res://scenes/mainmenu.tscn")
