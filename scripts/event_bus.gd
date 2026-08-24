@@ -32,3 +32,9 @@ signal joystickReleased()
 
 @warning_ignore("unused_signal")
 signal mobileShoot()
+
+@warning_ignore("unused_signal")
+signal toggleMute()
+
+@warning_ignore("unused_signal")
+signal togglePause()

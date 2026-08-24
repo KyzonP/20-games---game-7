@@ -1,5 +1,8 @@
 extends Node2D
 
+### Audio ###
+var buttonSound = preload("res://audio/Button.wav")
+
 func _ready():
 	checkScore()
 	
@@ -24,4 +27,6 @@ func checkScore():
 	save_load.save_game()
 	
 func startGame():
+	AudioManager.play_sfx(buttonSound)
+	
 	get_tree().change_scene_to_file("res://scenes/level.tscn")

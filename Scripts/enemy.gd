@@ -26,6 +26,9 @@ enum Direction {UP, DOWN, LEFT, RIGHT, VOID}
 
 const SNAP_DISTANCE = 4
 
+# Audio
+var hurtSound = preload("res://audio/EnemyHurt.wav")
+
 func _ready():
 	if not fake:
 		player = get_tree().get_nodes_in_group("Player")[0]
@@ -115,6 +118,13 @@ func updateAnim():
 				$AnimatedSprite2D.play("eyes")
 		
 func startBurrow():
+	# Audio
+	if $SFXPlayer.playing == false:
+		$SFXPlayer.playing = true
+	
+	# Particles
+	$DigParticles.emitting = true
+	
 	if burrowTween:
 		burrowTween.kill()
 	
@@ -126,6 +136,12 @@ func startBurrow():
 	state = States.BURROW
 	
 func endBurrow():
+	# Audio
+	$SFXPlayer.playing = false
+	
+	# Particles
+	$DigParticles.emitting = false
+	
 	burrowComplete = true
 	state = States.MOVE
 	chooseDirection(true)
@@ -140,7 +156,17 @@ func endBurrow():
 	#startFlee()
 		
 func startFlee():
+	# Audio
+	if $SFXPlayer.playing == false:
+		$SFXPlayer.playing = true
+		
+	# Particles
+	$DigParticles.emitting = true
+	
 	state = States.FLEE
+	
+	if burrowTween:
+		burrowTween.kill()
 	
 	if fleeTween:
 		fleeTween.kill()
@@ -161,6 +187,9 @@ func finishFlee():
 	event_bus.emit_signal("enemyFled")
 	
 func defeat():
+	# Audio
+	AudioManager.play_sfx(hurtSound)
+	
 	# code for enemy dying
 	if burrowTween:
 		burrowTween.kill()

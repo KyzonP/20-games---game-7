@@ -23,6 +23,11 @@ var speed : float = 80.0
 
 const SNAP_DISTANCE = 4
 
+### Audio ###
+var shootSound = preload("res://audio/Shoot.wav")
+var hurtSound = preload("res://audio/Hurt.wav")
+var digSound = preload("res://audio/Dig.wav")
+
 func _ready():
 	var cell = maze.local_to_map(global_position)
 	var centre = maze.map_to_local(cell)
@@ -136,7 +141,13 @@ func _physics_process(delta):
 		if global_position.distance_to(centre) < (speed * delta):
 			maze.TileReached(centre)
 			
-	
+	if not maze.is_tile_free(moveDir, global_position):
+		if $SFXPlayer.playing == false:
+			$SFXPlayer.playing = true
+		$DigParticles.emitting = true
+	else:
+		$SFXPlayer.playing = false
+			
 			
 func updateAnim():
 	match moveDir:
@@ -158,6 +169,9 @@ func updateAnim():
 			
 func SpawnProjectile():
 	if shootTimer >= shootTimerMax and shotReady and not lock:
+		# Audio
+		AudioManager.play_sfx(shootSound)
+		
 		shootTimer = 0
 		shotReady = false
 		
@@ -181,6 +195,9 @@ func killCollide(area):
 			
 func defeat():
 	if not dead:
+		# Audio
+		AudioManager.play_sfx(hurtSound)
+		
 		dead = true
 		event_bus.emit_signal("playerDefeated")
 		print("Game Over!")

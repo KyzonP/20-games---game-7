@@ -10,6 +10,10 @@ var speed : float = 120.0
 enum States {STABLE, SHAKING, FALLING}
 enum Direction {UP, DOWN, LEFT, RIGHT, VOID}
 
+### Audio ###
+var rockSound = preload("res://audio/Rock.wav")
+var shakeSound = preload("res://audio/RockShake.wav")
+
 func _physics_process(_delta):
 	if state == States.STABLE:
 		if checkBeneath():
@@ -19,6 +23,9 @@ func checkBeneath():
 	return maze.is_tile_free(Direction.DOWN, global_position)
 
 func startShake():
+	# Particles
+	$FallParticles.emitting = true
+	
 	state = States.SHAKING
 	
 	if shakeTween:
@@ -33,6 +40,9 @@ func startShake():
 	shakeTween.finished.connect(startFall)
 
 func startFall():
+	# Audio
+	AudioManager.play_sfx(shakeSound)
+	
 	state = States.FALLING
 	
 	if fallTween:
@@ -56,4 +66,7 @@ func checkEndFall():
 		endFall()
 
 func endFall():
+	# Audio
+	AudioManager.play_sfx(rockSound)
+	
 	state = States.STABLE

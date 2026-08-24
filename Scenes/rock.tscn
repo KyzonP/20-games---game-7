@@ -22,6 +22,20 @@ collision_layer = 4
 collision_mask = 11
 script = ExtResource("1_mek2u")
 
+[node name="FallParticles" type="CPUParticles2D" parent="." unique_id=948855500]
+emitting = false
+one_shot = true
+explosiveness = 0.15
+emission_shape = 1
+emission_sphere_radius = 6.0
+direction = Vector2(0, -10)
+gravity = Vector2(0, 490)
+initial_velocity_min = 10.0
+initial_velocity_max = 100.0
+color = Color(0.3518117, 0.34644052, 0.3464403, 1)
+hue_variation_min = -1.0
+hue_variation_max = 1.0
+
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1059449681]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_5mkji")

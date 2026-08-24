@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://c1cvilx5xmixi"]
+
+[ext_resource type="Script" uid="uid://buygxatxy1bln" path="res://scripts/pause_menu.gd" id="1_n87rw"]
+[ext_resource type="Texture2D" uid="uid://de2ml6yc2xibf" path="res://assets/ui/largeButton.png" id="2_5d2l8"]
+[ext_resource type="Texture2D" uid="uid://l2xccb0tppbm" path="res://assets/ui/largeButtonPressed.png" id="3_7l7mv"]
+[ext_resource type="Texture2D" uid="uid://dr562v0tjhyua" path="res://assets/ui/largeButtonHover.png" id="4_v4r4p"]
+[ext_resource type="FontFile" uid="uid://drfumsbcs4xxd" path="res://assets/fonts/PrStart.ttf" id="5_7l7mv"]
+
+[node name="PauseMenu" type="CanvasLayer" unique_id=1193684175]
+process_mode = 3
+visible = false
+script = ExtResource("1_n87rw")
+
+[node name="Button" type="TextureButton" parent="." unique_id=795610520]
+texture_filter = 1
+offset_top = 231.0
+offset_right = 449.0
+offset_bottom = 281.0
+texture_normal = ExtResource("2_5d2l8")
+texture_pressed = ExtResource("3_7l7mv")
+texture_hover = ExtResource("4_v4r4p")
+stretch_mode = 3
+
+[node name="LevelText" type="RichTextLabel" parent="Button" unique_id=1815459994]
+custom_minimum_size = Vector2(130, 25)
+layout_mode = 0
+offset_left = 179.0
+offset_top = 11.0
+offset_right = 315.0
+offset_bottom = 43.0
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("5_7l7mv")
+bbcode_enabled = true
+text = "Resume"
+fit_content = true

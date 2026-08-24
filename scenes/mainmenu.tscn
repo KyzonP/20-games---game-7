@@ -13,6 +13,10 @@
 [ext_resource type="Texture2D" uid="uid://dwltxgrl4aq5d" path="res://assets/ui/buttonPressed.png" id="11_gjjcl"]
 [ext_resource type="Texture2D" uid="uid://ck1ieobyic07q" path="res://assets/ui/buttonHover.png" id="12_kait0"]
 [ext_resource type="Texture2D" uid="uid://cp70angegqf8a" path="res://assets/ui/GameLogo.png" id="13_gjjcl"]
+[ext_resource type="Texture2D" uid="uid://bbh1p2oxhwucr" path="res://assets/ui/muteButton.png" id="14_hn6ym"]
+[ext_resource type="Texture2D" uid="uid://mrb7kv0jh484" path="res://assets/ui/muteButtonPressed.png" id="15_gr43c"]
+[ext_resource type="Texture2D" uid="uid://drfqd61nueved" path="res://assets/ui/muteButtonHover.png" id="16_18cd8"]
+[ext_resource type="Script" uid="uid://1qlh14mousl" path="res://scripts/mute_button.gd" id="17_gj5y3"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_81xng"]
 texture = ExtResource("2_4hago")
@@ -171,3 +175,14 @@ fit_content = true
 texture_filter = 1
 position = Vector2(224, 32)
 texture = ExtResource("13_gjjcl")
+
+[node name="MuteButton" type="TextureButton" parent="." unique_id=1726945726]
+texture_filter = 1
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 44.0
+offset_bottom = 44.0
+texture_normal = ExtResource("14_hn6ym")
+texture_pressed = ExtResource("15_gr43c")
+texture_hover = ExtResource("16_18cd8")
+script = ExtResource("17_gj5y3")
