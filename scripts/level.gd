@@ -17,6 +17,7 @@ var checkTimer : float = 0.0
 var checkTimerMax : float = 5.0
 
 func _ready():
+	
 	event_bus.enemyDefeated.connect(checkEnemies)
 	event_bus.enemyFled.connect(endLevel)
 	event_bus.playerDefeated.connect(playerDefeated)
@@ -114,5 +115,13 @@ func endLevel():
 		global.level = global.level + 1
 		restartLevel()
 		
-func gameOver():	
+func gameOver():
+	if global.score > global.bestScore:
+		global.bestScore = global.score
+		
+	if global.level > global.bestLevel:
+		global.bestLevel = global.level
+		
+	save_load.save_game()
+	
 	get_tree().change_scene_to_file("res://scenes/mainmenu.tscn")
